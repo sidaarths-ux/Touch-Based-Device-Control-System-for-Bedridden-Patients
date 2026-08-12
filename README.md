@@ -72,14 +72,6 @@ The system was built and validated module-by-module before final integration:
 - Flash Magic
 - LPC2148 board wired to: resistive touchscreen, 16x2 LCD, 4x4 keypad, AT25LC512 EEPROM (3.3V), 2x LED (devices), buzzer
 
-### Steps
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/<your-username>/<repo-name>.git
-   ```
-2. Open the project in Keil µVision and build to generate the `.hex` file.
-3. Flash the `.hex` file to the LPC2148 using Flash Magic.
-4. Power on the hardware, enter the default password via the keypad, and use the touchscreen to control the devices.
 
 ## 🔮 Future Scope
 
