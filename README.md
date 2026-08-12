@@ -63,17 +63,7 @@ The system was built and validated module-by-module before final integration:
    - Support buzzer-based emergency alert via touch
    - Support password change, with the updated password saved back to EEPROM
 
-## 📂 Suggested Repository Structure
 
-```
-├── src/                  # Peripheral driver source files (LCD, keypad, UART, SPI/EEPROM, touchscreen)
-├── inc/                  # Header files
-├── projectmain.c         # Main application logic
-├── images/
-│   ├── block-diagram.png
-│   └── flowchart.png
-└── README.md
-```
 
 ## 🚀 Getting Started
 
