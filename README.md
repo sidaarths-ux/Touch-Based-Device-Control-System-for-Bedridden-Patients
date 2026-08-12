@@ -1,100 +1,108 @@
 # Touch-Based Device Control System for Bedridden Patients
 
-An embedded assistive-technology system that lets bedridden or mobility-limited patients independently control nearby electrical devices — such as fans, lights, and emergency buzzers — through a simple touchscreen interface, reducing dependency on caregivers for routine tasks.
+A password-protected, touch-based device control system built on the ARM7 LPC2148 microcontroller, designed to help bedridden or mobility-limited patients operate essential appliances with minimal physical effort — with a password authentication layer to prevent unauthorized or accidental use.
 
 ---
 
-## 📌 Overview
+## 🎯 Aim
 
-Bedridden patients often rely entirely on caregivers for basic tasks like switching on a fan, turning off a light, or raising an alert — even for the smallest routine needs. This project addresses that dependency with a low-cost embedded control system built around a resistive touchscreen, giving patients a simple, direct way to control their immediate environment without physical switches or verbal requests.
+Patients confined to bed often depend entirely on caregivers to control basic devices like lights or alerts. This project addresses that dependency using a resistive touchscreen interface that lets patients control connected devices directly, while a keypad-based password mechanism ensures only authorized users (patient/admin) can operate or reconfigure the system.
 
-## 🎯 Problem Statement
+## 🖼️ Block Diagram
 
-- Patients confined to bed have limited or no access to conventional switches/appliance controls.
-- Constant reliance on caregivers for minor tasks reduces patient independence and increases caregiver workload.
-- There is a need for a low-cost, easy-to-use, non-verbal interface for environmental control.
+![Block Diagram](images/block-diagram.png)
 
-## ✨ Features
+## 🔁 System Flow
 
-- Touch-based control of multiple connected devices (fan, light, buzzer, etc.)
-- Zone-based touch mapping — each screen region corresponds to a specific device/function
-- Persistent configuration storage using external EEPROM (settings survive power cycles)
-- Serial communication support for debugging/external module integration
-- Low-cost, low-power hardware suitable for hospital or home-care environments
+![System Flow](images/flowchart.png)
 
-## 🛠️ System Architecture
+## ⚙️ How It Works
 
-**Working principle:**
-1. Patient touches a labeled zone on the resistive touchscreen.
-2. The analog touch position is sampled by the microcontroller's ADC.
-3. The sampled values are converted to digital coordinates and compared against predefined zone boundaries.
-4. The matched zone is decoded into a device-control command.
-5. The microcontroller drives the relay output stage to switch the corresponding device ON/OFF.
-6. Zone mapping and calibration data are read from/written to an external EEPROM over SPI, so settings persist across resets.
+1. On startup, the system waits for a password, entered via the 4x4 matrix keypad.
+2. The entered password is validated against the value stored in the AT25LC512 SPI EEPROM.
+3. Once authenticated, the touchscreen module is activated for device control.
+4. The patient touches predefined zones on the touchscreen to turn **Device 1 (LED1)** and **Device 2 (LED2)** ON/OFF.
+5. A dedicated touch zone allows the patient to trigger the **buzzer** for emergency alerts.
+6. The touchscreen can be disabled after use to prevent accidental device control.
+7. The admin/user can update the password via the keypad; the new password is written back to the EEPROM.
 
-```
-[Resistive Touchscreen] --(analog)--> [ADC] --> [LPC2148 MCU] --> [Relay Driver] --> [Connected Device]
-                                                       |
-                                                  [SPI EEPROM]  (config/calibration storage)
-                                                       |
-                                                    [UART]  (debug / external module)
-```
+> **Note:** The AT25LC512 SPI EEPROM must be operated at **3.3V**.
 
-## 🔧 Hardware Components
+## 🔧 Hardware Requirements
 
-| Component | Purpose |
+| Component | Role |
 |---|---|
-| ARM7 LPC2148 Microcontroller | Core processing — touch decoding, control logic |
-| Resistive Touchscreen | Patient input interface |
-| SPI EEPROM | Persistent storage for zone mapping/calibration |
-| Relay Driver Circuit | Switches connected appliances |
-| UART Module | Debugging / external device communication |
+| LPC2148 (ARM7) | Core microcontroller — control logic, peripheral interfacing |
+| Resistive Touch Screen Module | Patient touch input for device control |
+| 16x2 LCD | Status/prompt display |
+| 4x4 Matrix Keypad | Password entry and system configuration |
+| Device 1 (LED1) | Simulated controllable appliance |
+| Device 2 (LED2) | Simulated controllable appliance |
+| Buzzer | Emergency alert output |
+| AT25LC512 (SPI EEPROM) | Persistent password and configuration storage (3.3V) |
 
-## 💻 Tools & Technologies
+## 💻 Software Requirements
 
-- **MCU:** ARM7 LPC2148
-- **IDE/Programmer:** Keil µVision, Flash Magic
-- **Language:** Embedded C (register-level programming)
-- **Protocols:** SPI, UART, ADC-based touch sensing
-- **Simulation (optional):** Proteus
+- Embedded C
+- Keil µVision (Keil-C Compiler)
+- Flash Magic (for flashing the LPC2148)
 
-## 📂 Repository Structure
+## 🛠️ Implementation Sequence
+
+The system was built and validated module-by-module before final integration:
+
+1. **LCD check** — display character, string, and integer constants.
+2. **Keypad check** — read and display key values on the LCD.
+3. **UART check** — verify UART interrupt-based communication on hardware.
+4. **EEPROM check** — write and read N bytes to/from the AT25LC512 using Byte Write/Byte Read functions, display on LCD.
+5. **Touchscreen check (PC-side)** — verify touchscreen module output via MAX232 interfacing with a PC.
+6. **Touchscreen check (MCU-side)** — read touchscreen data using UART interrupt logic.
+7. **Integration** — combine all peripheral drivers into `projectmain.c`, initialize peripherals, and implement the main application logic:
+   - Prompt for password → validate against EEPROM
+   - On success, activate touchscreen control of Device 1 / Device 2
+   - Support buzzer-based emergency alert via touch
+   - Support password change, with the updated password saved back to EEPROM
+
+## 📂 Suggested Repository Structure
 
 ```
-├── src/            # Firmware source files
-├── inc/            # Header files
-├── docs/           # Circuit diagrams, project report, images
+├── src/                  # Peripheral driver source files (LCD, keypad, UART, SPI/EEPROM, touchscreen)
+├── inc/                  # Header files
+├── projectmain.c         # Main application logic
+├── images/
+│   ├── block-diagram.png
+│   └── flowchart.png
 └── README.md
 ```
-*(Adjust this section to match your actual folder layout.)*
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 - Keil µVision IDE
-- Flash Magic (for flashing the LPC2148)
-- LPC2148 development board with resistive touchscreen, SPI EEPROM, and relay module connected
+- Flash Magic
+- LPC2148 board wired to: resistive touchscreen, 16x2 LCD, 4x4 keypad, AT25LC512 EEPROM (3.3V), 2x LED (devices), buzzer
 
-### Setup
+### Steps
 1. Clone the repository:
-   ```
+   ```bash
    git clone https://github.com/<your-username>/<repo-name>.git
    ```
-2. Open the project in Keil µVision.
-3. Build the project to generate the `.hex` file.
-4. Flash the `.hex` file to the LPC2148 using Flash Magic.
-5. Power on the board and calibrate the touchscreen if prompted.
+2. Open the project in Keil µVision and build to generate the `.hex` file.
+3. Flash the `.hex` file to the LPC2148 using Flash Magic.
+4. Power on the hardware, enter the default password via the keypad, and use the touchscreen to control the devices.
 
 ## 🔮 Future Scope
 
-- Add wireless control (Bluetooth/Wi-Fi) for remote monitoring by caregivers
-- Voice-assist fallback for patients unable to use touch
-- Expand to more devices with a scrollable/multi-page touch UI
-- Add feedback display (LCD/OLED) to show current device states
+- Wireless (Bluetooth/Wi-Fi) monitoring for caregivers
+- Support for additional controllable devices
+- Voice-assist fallback for patients unable to use touch or keypad input
+- OLED/graphical display for richer status feedback
 
 ## 👤 Author
 
-**Sidaarth S**
+**Sidaarth.S**
 B.Tech ECE, VIT Vellore
 
+## 📄 License
 
+*(Add a license, e.g., MIT, if you want others to freely use or modify this project.)*
