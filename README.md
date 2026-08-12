@@ -97,6 +97,4 @@ Bedridden patients often rely entirely on caregivers for basic tasks like switch
 **Sidaarth Saravana Kumar**
 B.Tech ECE, VIT Vellore
 
-## 📄 License
 
-*(Add a license of your choice, e.g., MIT License, if you want others to freely use/modify this project.)*
