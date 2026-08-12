@@ -10,7 +10,7 @@ Patients confined to bed often depend entirely on caregivers to control basic de
 
 ## 🖼️ Block Diagram
 
-![Block Diagram](images/block-diagram.png)
+![Block Diagram]https://github.com/sidaarths-ux/Touch-Based-Device-Control-System-for-Bedridden-Patients/blob/fbea4511341ba999196d8a3a24fadd353eb436e3/flowchart%20(1).png
 
 ## 🔁 System Flow
 
