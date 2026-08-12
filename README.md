@@ -102,7 +102,3 @@ The system was built and validated module-by-module before final integration:
 
 **Sidaarth.S**
 B.Tech ECE, VIT Vellore
-
-## 📄 License
-
-*(Add a license, e.g., MIT, if you want others to freely use or modify this project.)*
